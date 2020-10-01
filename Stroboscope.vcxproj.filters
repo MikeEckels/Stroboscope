@@ -24,9 +24,21 @@
     <ClInclude Include="Stroboscope.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TimerOne.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="known_16bit_timers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Stroboscope.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerOne.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

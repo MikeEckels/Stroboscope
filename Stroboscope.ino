@@ -8,12 +8,12 @@ void setup() {
 	Serial.begin(115200);
 
 	Strobe.Initialize();
-	Strobe.SetFrequency(10);
-	Strobe.SetDutyCyclePercent(1);
+	Strobe.SetFrequency(1000000);
+	Strobe.SetDutyCyclePercent(15);
 	Strobe.Start();
 }
 
 void loop() {
-	Strobe.SetFrequency(Strobe.MapPot(Strobe.GetPotVal()));
-	DEBUG_PRINTLN(Strobe.MapPot(Strobe.GetPotVal()));
+	//Strobe.SetFrequency(Strobe.MapPot(Strobe.GetPotVal()));
+	//DEBUG_PRINTLN(Strobe.MapPot(Strobe.GetPotVal()));
 }

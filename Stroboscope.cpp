@@ -1,21 +1,23 @@
 #include "Stroboscope.h"
 
-Stroboscope* StroboscopePointer;
-
-static void globalISR() {
-	StroboscopePointer->Flash();
-}
+//Stroboscope* StroboscopePointer;
+//
+//static void globalISR() {
+//	StroboscopePointer->Flash();
+//}
 
 void Stroboscope::Initialize() {
-	StroboscopePointer = this;
+	//StroboscopePointer = this;
 
 	pinMode(this->ledPin, OUTPUT);
 	pinMode(this->potPin, INPUT);
 	pinMode(this->btnPin, INPUT_PULLUP);
 	pinMode(this->externalTriggerPin, INPUT);
+	TurnOffLed();
 
-	Timer1.initialize(1);
-	Timer1.attachInterrupt(globalISR);
+	Timer1.initialize();
+	Timer1.pwm(this->ledPin, 512);
+	//Timer1.attachInterrupt(globalISR);
 	DEBUG_PRINT_NOTICE("Stroboscope Initialized");
 }
 
@@ -25,21 +27,25 @@ void Stroboscope::Start() {
 
 void Stroboscope::Stop() {
 	Timer1.stop();
-	Timer1.detachInterrupt();
+	//Timer1.detachInterrupt();
 	SetFrequency(0.0f);
-	TurnOffLed();
+	//TurnOffLed();
 }
 
 void Stroboscope::TurnOnLed() {
-	digitalWrite(this->ledPin, HIGH);
-}
-
-void Stroboscope::TurnOffLed() {
+	Timer1.resume();
 	digitalWrite(this->ledPin, LOW);
 }
 
+void Stroboscope::TurnOffLed() {
+	Timer1.stop();
+	digitalWrite(this->ledPin, HIGH);
+}
+
 void Stroboscope::SetDutyCyclePercent(unsigned char percent) {
-	this->pulseTime = (float(percent) * (this->flashPeriod * 1000000.0f)) / (100.0f);
+	//this->pulseTime = (float(percent) * (this->flashPeriod * 1000000.0f)) / (100.0f);
+	this->pulseTime = ((float(percent) * (1024.0f )) / (100.0f));
+	Timer1.setPwmDuty(this->ledPin, this->pulseTime);
 	DEBUG_PRINT_INFO("Pulse Width(uS): " + (String)(this->pulseTime));
 }
 
@@ -71,8 +77,8 @@ unsigned int Stroboscope::MapPot(unsigned int value) {
 	return(mappedPotValue);
 }
 
-void Stroboscope::Flash() {
-	TurnOnLed();
-	delayMicroseconds(this->pulseTime);
-	TurnOffLed();
-}
+//void Stroboscope::Flash() {
+//	TurnOnLed();
+//	delayMicroseconds(this->pulseTime);
+//	TurnOffLed();
+//}

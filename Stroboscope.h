@@ -7,7 +7,7 @@ class Stroboscope {
 private:
 	const unsigned char potPin = A6;
 	const unsigned char btnPin = 1;
-	const unsigned char ledPin = LED_BUILTIN;
+	const unsigned char ledPin = 10;
 	const unsigned char externalTriggerPin = 14;
 
 	unsigned int mappedPotValue;
@@ -23,7 +23,7 @@ private:
 
 public:
 	void Initialize();
-	void Flash();
+	//void Flash();
 	void Start();
 	void Stop();
 

@@ -8,9 +8,11 @@
 
 void Stroboscope::Initialize() {
 	//StroboscopePointer = this;
+  DEBUG_PRINT_NOTICE("Initializing Stroboscope");
 
 	pinMode(this->ledPin, OUTPUT);
-	pinMode(this->potPin, INPUT);
+	pinMode(this->freqPotPin, INPUT);
+  pinMode(this->dutyPotPin, INPUT);
 	pinMode(this->btnPin, INPUT_PULLUP);
 	pinMode(this->externalTriggerPin, INPUT);
 	TurnOffLed();
@@ -18,7 +20,7 @@ void Stroboscope::Initialize() {
 	Timer1.initialize();
 	Timer1.pwm(this->ledPin, 512);
 	//Timer1.attachInterrupt(globalISR);
-	DEBUG_PRINT_NOTICE("Stroboscope Initialized");
+	
 }
 
 void Stroboscope::Start() {
@@ -71,17 +73,21 @@ void Stroboscope::CalculatePeriod() {
 	this->flashPeriod = ((1.0f) / (this->flashFreq));
 }
 
-unsigned int Stroboscope::GetPotVal() {
-	return(analogRead(potPin));
+unsigned int Stroboscope::GetFreqPotVal() {
+	return(analogRead(freqPotPin));
+}
+
+unsigned int Stroboscope::GetDutyPotVal() {
+  return(analogRead(dutyPotPin));
 }
 
 float Stroboscope::PotToFrequency(unsigned int potValue) {
-	this->potFreqValue = mapFloat(potValue, 0.0f, 1023.0f, 10.0f, 1000000.0f);
+	this->potFreqValue = mapFloat((float)potValue, 0.0f, 1023.0f, 1.0f, 1000000.0f);
 	return(this->potFreqValue);
 }
 
 float Stroboscope::PotToDutyCycle(unsigned int potValue) {
-  this->potDutyCycleValue = mapFloat(potValue, 0.0f, 1023.0f, 0.0f, 100.0f);
+  this->potDutyCycleValue = mapFloat((float)potValue, 0.0f, 1023.0f, 0.0f, 100.0f);
   return(this->potDutyCycleValue);
 }
 

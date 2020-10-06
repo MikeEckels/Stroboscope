@@ -5,7 +5,8 @@
 
 class Stroboscope {
 private:
-	const unsigned char potPin = A6;
+	const unsigned char freqPotPin = A0;
+  const unsigned char dutyPotPin = A1;
 	const unsigned char btnPin = 1;
 	const unsigned char ledPin = 10;
 	const unsigned char externalTriggerPin = 14;
@@ -33,7 +34,8 @@ public:
 	void SetFrequency(float freq);
 	void SetRPM(float rpm);
 
-	unsigned int GetPotVal();
+	unsigned int GetFreqPotVal();
+  unsigned int GetDutyPotVal();
  
 	float PotToFrequency(unsigned int potValue);
   float PotToDutyCycle(unsigned int potValue);

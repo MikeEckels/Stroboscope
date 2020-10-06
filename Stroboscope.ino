@@ -14,6 +14,6 @@ void setup() {
 }
 
 void loop() {
-	//Strobe.SetFrequency(Strobe.MapPot(Strobe.GetPotVal()));
-	//DEBUG_PRINTLN(Strobe.MapPot(Strobe.GetPotVal()));
+	Strobe.SetFrequency(Strobe.PotToFrequency(Strobe.GetFreqPotVal()));
+  Strobe.SetDutyCyclePercent(Strobe.PotToDutyCycle(Strobe.GetDutyPotVal()));
 }

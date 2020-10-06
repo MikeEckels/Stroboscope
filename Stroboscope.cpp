@@ -23,30 +23,32 @@ void Stroboscope::Initialize() {
 
 void Stroboscope::Start() {
 	Timer1.start();
+  DEBUG_PRINT_NOTICE("Timer Started");
 }
 
 void Stroboscope::Stop() {
 	Timer1.stop();
 	//Timer1.detachInterrupt();
 	SetFrequency(0.0f);
+  DEBUG_PRINT_ERR("Timer Stopped");
 	//TurnOffLed();
 }
 
 void Stroboscope::TurnOnLed() {
-	Timer1.resume();
 	digitalWrite(this->ledPin, LOW);
+  DEBUG_PRINT_INFO("LED On");
 }
 
 void Stroboscope::TurnOffLed() {
 	Timer1.stop();
 	digitalWrite(this->ledPin, HIGH);
+  DEBUG_PRINT_INFO("LED Off");
 }
 
 void Stroboscope::SetDutyCyclePercent(unsigned char percent) {
 	//this->pulseTime = (float(percent) * (this->flashPeriod * 1000000.0f)) / (100.0f);
 	this->pulseTime = ((float(percent) * (1024.0f )) / (100.0f));
 	Timer1.setPwmDuty(this->ledPin, this->pulseTime);
-	DEBUG_PRINT_INFO("Pulse Width(uS): " + (String)(this->pulseTime));
 }
 
 void Stroboscope::SetFrequency(float freq) {
@@ -54,9 +56,10 @@ void Stroboscope::SetFrequency(float freq) {
 	CalculatePeriod();
 
 	Timer1.setPeriod(this->flashPeriod * 1000000.0f);
-	DEBUG_PRINT_INFO("Frequency(Hz): " + (String)(this->flashFreq));
 	DEBUG_PRINT_INFO("Period(S): " + (String)(this->flashPeriod));
 	DEBUG_PRINT_INFO("Period(uS): " + (String)(this->flashPeriod * 1000000.0f));
+  DEBUG_PRINT_INFO("Frequency(Hz): " + (String)(this->flashFreq));
+  DEBUG_PRINT_INFO("Pulse Width(uS): " + (String)(this->pulseTime));
 }
 
 void Stroboscope::SetRPM(float rpm) {
@@ -72,9 +75,19 @@ unsigned int Stroboscope::GetPotVal() {
 	return(analogRead(potPin));
 }
 
-unsigned int Stroboscope::MapPot(unsigned int value) {
-	this->mappedPotValue = map(value, 0, 1023, 1, 100);
-	return(mappedPotValue);
+float Stroboscope::PotToFrequency(unsigned int potValue) {
+	this->potFreqValue = mapFloat(potValue, 0.0f, 1023.0f, 10.0f, 1000000.0f);
+	return(this->potFreqValue);
+}
+
+float Stroboscope::PotToDutyCycle(unsigned int potValue) {
+  this->potDutyCycleValue = mapFloat(potValue, 0.0f, 1023.0f, 0.0f, 100.0f);
+  return(this->potDutyCycleValue);
+}
+
+float Stroboscope::mapFloat(float x, float in_min, float in_max, float out_min, float out_max)
+{
+ return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 //void Stroboscope::Flash() {

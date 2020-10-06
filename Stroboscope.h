@@ -10,7 +10,8 @@ private:
 	const unsigned char ledPin = 10;
 	const unsigned char externalTriggerPin = 14;
 
-	unsigned int mappedPotValue;
+	float potFreqValue;
+  float potDutyCycleValue;
 
 	float flashFreq;
 	float flashPeriod;
@@ -19,8 +20,9 @@ private:
 	void TurnOnLed();
 	void TurnOffLed();
 	void CalculatePeriod();
+ 
+  float mapFloat(float x, float in_min, float in_max, float out_min, float out_max);
 	
-
 public:
 	void Initialize();
 	//void Flash();
@@ -32,5 +34,7 @@ public:
 	void SetRPM(float rpm);
 
 	unsigned int GetPotVal();
-	unsigned int MapPot(unsigned int value);
+ 
+	float PotToFrequency(unsigned int potValue);
+  float PotToDutyCycle(unsigned int potValue);
 };

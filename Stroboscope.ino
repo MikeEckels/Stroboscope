@@ -1,6 +1,5 @@
-#include "Stroboscope.h"
-
 #define DEBUG
+#include "Stroboscope.h" 
 
 Stroboscope Strobe;
 
@@ -14,6 +13,7 @@ void setup() {
 }
 
 void loop() {
-	Strobe.SetFrequency(Strobe.PotToFrequency(Strobe.GetFreqPotVal()));
-  Strobe.SetDutyCyclePercent(Strobe.PotToDutyCycle(Strobe.GetDutyPotVal()));
+	//Strobe.SetFrequency(Strobe.PotToFrequency(Strobe.GetFreqPotVal()));
+	//Strobe.SetDutyCyclePercent(Strobe.PotToDutyCycle(Strobe.GetDutyPotVal()));
+	Strobe.SetDutyCyclePercent(25);
 }

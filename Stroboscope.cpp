@@ -2,33 +2,47 @@
 
 Stroboscope* UpPointer;
 Stroboscope* DwnPointer;
+Stroboscope* LeftPointer;
+Stroboscope* RightPointer;
 
-static void upBtnGlobalISR() {
-	UpPointer->IncreaseFreq();
+void Stroboscope::upBtnGlobalISR() {
+	UpPointer->UpBtnClick();
 }
 
-static void dwnBtnGlobalISR() {
-	DwnPointer->DecreaseFreq();
+void Stroboscope::dwnBtnGlobalISR() {
+	DwnPointer->DwnBtnClick();
+}
+
+void Stroboscope::leftBtnGlobalISR() {
+	LeftPointer->LeftBtnClick();
+}
+
+void Stroboscope::rightBtnGlobalISR() {
+	RightPointer->RightBtnClick();
 }
 
 void Stroboscope::Initialize() {
 	UpPointer = this;
 	DwnPointer = this;
+	LeftPointer = this;
+	RightPointer = this;
 	DEBUG_PRINT_NOTICE("Initializing Stroboscope");
 
 	pinMode(this->ledPin, OUTPUT);
 	pinMode(this->freqPotPin, INPUT);
 	pinMode(this->dutyPotPin, INPUT);
-	pinMode(this->freqUpBtnPin, INPUT_PULLUP);
-	pinMode(this->freqDwnBtnPin, INPUT_PULLUP);
-	pinMode(this->externalTriggerPin, INPUT);
+	pinMode(this->upBtnPin, INPUT_PULLUP);
+	pinMode(this->dwnBtnPin, INPUT_PULLUP);
+	pinMode(this->externalEnablePin, INPUT);
 	TurnOffLed();
 
 	Timer1.initialize();
 	Timer1.pwm(this->ledPin, 512);
 
-	attachInterrupt(digitalPinToInterrupt(this->freqUpBtnPin), upBtnGlobalISR, FALLING);
-	attachInterrupt(digitalPinToInterrupt(this->freqDwnBtnPin), dwnBtnGlobalISR, FALLING);
+	attachInterrupt(digitalPinToInterrupt(this->upBtnPin), upBtnGlobalISR, FALLING);
+	attachInterrupt(digitalPinToInterrupt(this->dwnBtnPin), dwnBtnGlobalISR, FALLING);
+	attachInterrupt(digitalPinToInterrupt(this->leftBtnPin), leftBtnGlobalISR, FALLING);
+	attachInterrupt(digitalPinToInterrupt(this->rightBtnPin), rightBtnGlobalISR, FALLING);
 }
 
 void Stroboscope::Start() {
@@ -41,8 +55,8 @@ void Stroboscope::Stop() {
 	SetFrequency(0.0f);
 	DEBUG_PRINT_ERR("Timer Stopped");
 
-	detachInterrupt(digitalPinToInterrupt(this->freqUpBtnPin));
-	detachInterrupt(digitalPinToInterrupt(this->freqDwnBtnPin));
+	detachInterrupt(digitalPinToInterrupt(this->upBtnPin));
+	detachInterrupt(digitalPinToInterrupt(this->dwnBtnPin));
 	//TurnOffLed();
 }
 
@@ -91,6 +105,10 @@ unsigned int Stroboscope::GetDutyPotVal() {
 	return(analogRead(dutyPotPin));
 }
 
+float Stroboscope::GetFrequency() {
+	return(this->flashFreq);
+}
+
 float Stroboscope::PotToFrequency(unsigned int potValue) {
 	this->potFreqValue = mapFloat((float)potValue, 0.0f, 1023.0f, this->minFrequency, this->maxFrequency);
 	return(this->potFreqValue);
@@ -105,26 +123,34 @@ float Stroboscope::mapFloat(float x, float in_min, float in_max, float out_min, 
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-void Stroboscope::IncreaseFreq() {
-	if ((this->flashFreq + 10000) <= this->maxFrequency) {
-		this->flashFreq += 10000;
+void Stroboscope::UpBtnClick() {
+	if ((this->flashFreq + 0.5f) <= this->maxFrequency) {
+		this->flashFreq += 0.5f;
 	}
 	else {
 		this->flashFreq = this->maxFrequency;
 	}
-	
-	SetFrequency(this->flashFreq);
-  DEBUG_PRINT_NOTICE("Increased Frequency");
+	//SetFrequency(this->flashFreq);
+	DEBUG_PRINT_NOTICE("Increased Frequency");
 }
 
-void Stroboscope::DecreaseFreq() {
-	if ((this->flashFreq - 10000) >= this->minFrequency) {
-		this->flashFreq -= 10000;
+void Stroboscope::DwnBtnClick() {
+	if ((this->flashFreq - 0.5f) >= this->minFrequency) {
+		this->flashFreq -= 0.5f;
 	}
 	else {
 		this->flashFreq = this->minFrequency;
 	}
+	//SetFrequency(this->flashFreq);
+	DEBUG_PRINT_NOTICE("Decreased Frequency");
+}
 
+void Stroboscope::LeftBtnClick() {
+	
+	DEBUG_PRINT_NOTICE("Left button clicked");
+}
+
+void Stroboscope::RightBtnClick() {
 	SetFrequency(this->flashFreq);
-  DEBUG_PRINT_NOTICE("Decreased Frequency");
+	DEBUG_PRINT_NOTICE("Right button clicked");
 }

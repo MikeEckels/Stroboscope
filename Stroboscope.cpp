@@ -16,10 +16,10 @@ void Stroboscope::Initialize() {
 	Timer1.initialize();
 	Timer1.pwm(this->ledPin, 512);
 
-	attachInterrupt(digitalPinToInterrupt(this->upBtnPin), upBtnGlobalISR, FALLING);
-	attachInterrupt(digitalPinToInterrupt(this->dwnBtnPin), dwnBtnGlobalISR, FALLING);
-	attachInterrupt(digitalPinToInterrupt(this->leftBtnPin), leftBtnGlobalISR, FALLING);
-	attachInterrupt(digitalPinToInterrupt(this->rightBtnPin), rightBtnGlobalISR, FALLING);
+	attachInterrupt(digitalPinToInterrupt(this->upBtnPin), upBtnISR, FALLING);
+	attachInterrupt(digitalPinToInterrupt(this->dwnBtnPin), dwnBtnISR, FALLING);
+	attachInterrupt(digitalPinToInterrupt(this->leftBtnPin), leftBtnISR, FALLING);
+	attachInterrupt(digitalPinToInterrupt(this->rightBtnPin), rightBtnISR, FALLING);
 }
 
 void Stroboscope::Start() {

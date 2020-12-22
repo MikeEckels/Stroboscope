@@ -46,19 +46,19 @@ private:
 	void LeftBtnClick();
 	void RightBtnClick();
 
-	static void upBtnGlobalISR() {
+	static void upBtnISR() {
 		InternalStroboscope::_pThis->UpBtnClick();
 	}
 
-	static void dwnBtnGlobalISR() {
+	static void dwnBtnISR() {
 		InternalStroboscope::_pThis->DwnBtnClick();
 	}
 
-	static void leftBtnGlobalISR() {
+	static void leftBtnISR() {
 		InternalStroboscope::_pThis->LeftBtnClick();
 	}
 
-	static void rightBtnGlobalISR() {
+	static void rightBtnISR() {
 		InternalStroboscope::_pThis->RightBtnClick();
 	}
 
@@ -70,7 +70,6 @@ public:
 	void Start();
 	void Stop();
 
-	//ISR's not for user use
 	void SetDutyCyclePercent(unsigned char percent);
 	void SetFrequency(float freq);
 	void SetRPM(float rpm);

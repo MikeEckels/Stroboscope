@@ -1,31 +1,8 @@
 #include "Stroboscope.h"
 
-Stroboscope* UpPointer;
-Stroboscope* DwnPointer;
-Stroboscope* LeftPointer;
-Stroboscope* RightPointer;
-
-void Stroboscope::upBtnGlobalISR() {
-	UpPointer->UpBtnClick();
-}
-
-void Stroboscope::dwnBtnGlobalISR() {
-	DwnPointer->DwnBtnClick();
-}
-
-void Stroboscope::leftBtnGlobalISR() {
-	LeftPointer->LeftBtnClick();
-}
-
-void Stroboscope::rightBtnGlobalISR() {
-	RightPointer->RightBtnClick();
-}
-
 void Stroboscope::Initialize() {
-	UpPointer = this;
-	DwnPointer = this;
-	LeftPointer = this;
-	RightPointer = this;
+	InternalStroboscope::_pThis = this;
+
 	DEBUG_PRINT_NOTICE("Initializing Stroboscope");
 
 	pinMode(this->ledPin, OUTPUT);
@@ -73,7 +50,7 @@ void Stroboscope::TurnOffLed() {
 
 void Stroboscope::SetDutyCyclePercent(unsigned char percent) {
 	//this->pulseTime = (float(percent) * (this->flashPeriod * 1000000.0f)) / (100.0f);
-	this->pulseTime = ((float(percent) * (1024.0f )) / (100.0f));
+	this->pulseTime = ((float(percent) * (1024.0f)) / (100.0f));
 	Timer1.setPwmDuty(this->ledPin, this->pulseTime);
 }
 
@@ -146,7 +123,7 @@ void Stroboscope::DwnBtnClick() {
 }
 
 void Stroboscope::LeftBtnClick() {
-	
+
 	DEBUG_PRINT_NOTICE("Left button clicked");
 }
 

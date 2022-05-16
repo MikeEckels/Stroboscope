@@ -1,13 +1,12 @@
 #pragma once
 #include <Wire.h>
-#include "Menu.h"
-#include"Arduino.h"
+#include <Arduino.h>
 #include <U8g2lib.h>
-#include "TimerOne.h"
+#include <IntervalTimer.h>
 #include "DebugUtils.h"
 
 class Stroboscope;
-//extern U8X8_SH1106_128X64_NONAME_HW_I2C u8x8;
+
 extern U8G2_SH1106_128X64_NONAME_2_HW_I2C u8g2;
 
 namespace InternalStroboscope {
@@ -18,6 +17,7 @@ class Stroboscope {
 private:
 	Stroboscope(const Stroboscope&) = delete;
 	Stroboscope& operator=(const Stroboscope&) = delete;
+	IntervalTimer Timer;
 
 	const unsigned char ledPin = 7;
 	const unsigned char freqPotPin = A0;
@@ -40,6 +40,7 @@ private:
 	volatile float flashPeriod;
 	float pulseTime;
 
+	void Pulse();
 	void TurnOnLed();
 	void TurnOffLed();
 	void CalculatePeriod();
@@ -50,6 +51,10 @@ private:
 	void DwnBtnClick();
 	void LeftBtnClick();
 	void RightBtnClick();
+
+	static void PulseISR() {
+		InternalStroboscope::_pThis->Pulse();
+	}
 
 	static void upBtnISR() {
 		InternalStroboscope::_pThis->UpBtnClick();

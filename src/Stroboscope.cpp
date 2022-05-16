@@ -1,6 +1,5 @@
 #include "Stroboscope.h"
 
-//U8X8_SH1106_128X64_NONAME_HW_I2C u8x8(/* reset=*/ U8X8_PIN_NONE);
 U8G2_SH1106_128X64_NONAME_2_HW_I2C u8g2(U8G2_R2, /* reset=*/ U8X8_PIN_NONE);
 
 void Stroboscope::Initialize() {
@@ -19,9 +18,6 @@ void Stroboscope::Initialize() {
 	pinMode(this->externalEnablePin, INPUT);
 	TurnOffLed();
 
-	Timer1.initialize();
-	Timer1.pwm(this->ledPin, 512);
-
 	attachInterrupt(digitalPinToInterrupt(this->upBtnPin), upBtnISR, FALLING);
 	attachInterrupt(digitalPinToInterrupt(this->dwnBtnPin), dwnBtnISR, FALLING);
 	attachInterrupt(digitalPinToInterrupt(this->leftBtnPin), leftBtnISR, FALLING);
@@ -29,46 +25,54 @@ void Stroboscope::Initialize() {
 }
 
 void Stroboscope::Start() {
-	Timer1.start();
+	Timer.begin(PulseISR, this->flashPeriod * 1000000.0f);
 	DEBUG_PRINT_NOTICE("Timer Started");
 }
 
 void Stroboscope::Stop() {
-	Timer1.stop();
+	Timer.end();
 	SetFrequency(0.0f);
 	DEBUG_PRINT_ERR("Timer Stopped");
 
 	detachInterrupt(digitalPinToInterrupt(this->upBtnPin));
 	detachInterrupt(digitalPinToInterrupt(this->dwnBtnPin));
-	//TurnOffLed();
+}
+
+void Stroboscope::Pulse() {
+	Stroboscope::TurnOnLed();
+	if ((float(this->pulseTime) * 1000000.0f) > 1.0f) {
+		delayMicroseconds(this->pulseTime * 1000000.0f);
+	}
+	else {
+		delayNanoseconds(this->pulseTime * 1000000000.0f);
+	}
+	Stroboscope::TurnOffLed();
 }
 
 void Stroboscope::TurnOnLed() {
 	digitalWrite(this->ledPin, LOW);
-	DEBUG_PRINT_INFO("LED On");
+	//DEBUG_PRINT_INFO("LED On");
 }
 
 void Stroboscope::TurnOffLed() {
-	Timer1.stop();
 	digitalWrite(this->ledPin, HIGH);
-	DEBUG_PRINT_INFO("LED Off");
+	//DEBUG_PRINT_INFO("LED Off");
 }
 
 void Stroboscope::SetDutyCyclePercent(unsigned char percent) {
-	//this->pulseTime = (float(percent) * (this->flashPeriod * 1000000.0f)) / (100.0f);
-	this->pulseTime = ((float(percent) * (1024.0f)) / (100.0f));
-	Timer1.setPwmDuty(this->ledPin, this->pulseTime);
+	//this->pulseTime = ((float(percent) * (1024.0f)) / (100.0f));
+	this->pulseTime = ((float(percent) / (100.0f)) * (float(this->flashPeriod)));
+	DEBUG_PRINT_INFO("Pulse Width(uS): " + (String)(this->pulseTime * 1000000.0f));
 }
 
 void Stroboscope::SetFrequency(float freq) {
 	this->flashFreq = freq;
 	CalculatePeriod();
 
-	Timer1.setPeriod(this->flashPeriod * 1000000.0f);
+	Timer.update(this->flashPeriod * 1000000.0f);
 	DEBUG_PRINT_INFO("Period(S): " + (String)(this->flashPeriod));
 	DEBUG_PRINT_INFO("Period(uS): " + (String)(this->flashPeriod * 1000000.0f));
 	DEBUG_PRINT_INFO("Frequency(Hz): " + (String)(this->flashFreq));
-	DEBUG_PRINT_INFO("Pulse Width(uS): " + (String)(this->pulseTime));
 }
 
 void Stroboscope::SetRPM(float rpm) {

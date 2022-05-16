@@ -9,6 +9,7 @@ void Stroboscope::Initialize() {
 	DEBUG_PRINT_NOTICE("Initializing Stroboscope");
 
 	u8g2.begin();
+	u8g2.setFlipMode(1);
 
 	pinMode(this->ledPin, OUTPUT);
 	pinMode(this->freqPotPin, INPUT);
@@ -89,6 +90,10 @@ unsigned int Stroboscope::GetDutyPotVal() {
 
 float Stroboscope::GetFrequency() {
 	return(this->flashFreq);
+}
+
+float Stroboscope::GetRPM() {
+	return(Stroboscope::GetFrequency() * 60.0f);
 }
 
 float Stroboscope::PotToFrequency(unsigned int potValue) {

@@ -82,6 +82,7 @@ public:
 	unsigned int GetFreqPotVal();
 	unsigned int GetDutyPotVal();
 	float GetFrequency();
+	float GetRPM();
 
 	float PotToFrequency(unsigned int potValue);
 	float PotToDutyCycle(unsigned int potValue);
